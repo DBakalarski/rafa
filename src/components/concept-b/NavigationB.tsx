@@ -7,8 +7,10 @@ import { CONTACT_INFO } from "@/lib/constants";
 export const NavigationB = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -37,7 +39,10 @@ export const NavigationB = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/concept-b" className="flex items-baseline gap-1">
+          <Link
+            href="/concept-b"
+            className={`flex items-baseline gap-1 ${mounted ? "animate-fade-in" : "opacity-0"}`}
+          >
             <span
               className="text-xl font-black tracking-tight"
               style={{ color: "var(--color-b-text)" }}
@@ -54,12 +59,15 @@ export const NavigationB = () => {
 
           {/* Desktop menu */}
           <div className="hidden lg:flex items-center gap-7">
-            {navLinks.map((link) => (
+            {navLinks.map((link, i) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium transition-colors hover:opacity-100 relative group"
-                style={{ color: "var(--color-b-text-secondary)" }}
+                className={`text-sm font-medium relative group ${mounted ? "animate-fade-in" : "opacity-0"}`}
+                style={{
+                  color: "var(--color-b-text-secondary)",
+                  ...(mounted ? { animationDelay: `${100 + i * 40}ms` } : {}),
+                }}
               >
                 {link.label}
                 <span
@@ -74,15 +82,22 @@ export const NavigationB = () => {
           <div className="hidden lg:flex items-center gap-4">
             <a
               href={`tel:${CONTACT_INFO.phone.replace(/\s/g, "")}`}
-              className="text-sm font-medium"
-              style={{ color: "var(--color-b-text-secondary)" }}
+              className={`text-sm font-medium ${mounted ? "animate-fade-in" : "opacity-0"}`}
+              style={{
+                color: "var(--color-b-text-secondary)",
+                ...(mounted ? { animationDelay: "310ms" } : {}),
+              }}
             >
               {CONTACT_INFO.phone}
             </a>
             <a
               href="#"
-              className="px-5 py-2 rounded-full text-sm font-bold transition-opacity hover:opacity-90"
-              style={{ backgroundColor: "var(--color-b-accent)", color: "var(--color-b-primary)" }}
+              className={`px-5 py-2 rounded-full text-sm font-bold transition-[opacity,transform] duration-150 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] ${mounted ? "animate-scale-in" : "opacity-0"}`}
+              style={{
+                backgroundColor: "var(--color-b-accent)",
+                color: "var(--color-b-primary)",
+                ...(mounted ? { animationDelay: "400ms" } : {}),
+              }}
             >
               Odkryj ośrodek
             </a>
@@ -104,8 +119,8 @@ export const NavigationB = () => {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-50 flex flex-col"
-          style={{ backgroundColor: "var(--color-b-primary)" }}
+          className="fixed inset-0 z-50 flex flex-col animate-fade-in"
+          style={{ backgroundColor: "var(--color-b-primary)", animationDuration: "200ms" }}
         >
           <div className="flex items-center justify-between px-4 h-16">
             <span className="text-xl font-black tracking-tight" style={{ color: "var(--color-b-text)" }}>
@@ -122,7 +137,7 @@ export const NavigationB = () => {
               <Link
                 key={link.label}
                 href={link.href}
-                className="py-4 px-2 text-2xl font-black tracking-tight transition-colors border-b"
+                className="py-4 px-2 text-2xl font-black tracking-tight border-b animate-fade-in-left"
                 style={{
                   color: "var(--color-b-text)",
                   borderColor: "color-mix(in srgb, var(--color-b-text) 10%, transparent)",
@@ -137,8 +152,12 @@ export const NavigationB = () => {
           <div className="p-4">
             <a
               href="#"
-              className="block w-full text-center py-4 rounded-full font-bold text-sm"
-              style={{ backgroundColor: "var(--color-b-accent)", color: "var(--color-b-primary)" }}
+              className="block w-full text-center py-4 rounded-full font-bold text-sm animate-scale-in"
+              style={{
+                backgroundColor: "var(--color-b-accent)",
+                color: "var(--color-b-primary)",
+                animationDelay: `${navLinks.length * 60}ms`,
+              }}
             >
               Odkryj ośrodek
             </a>
