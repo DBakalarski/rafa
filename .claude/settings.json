@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(git:*)",
+      "Read",
+      "Glob",
+      "Grep"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; if echo \"$f\" | grep -qE '\\.(ts|tsx)$'; then npx eslint --fix \"$f\"; fi; } 2>/dev/null || true",
+            "timeout": 30,
+            "statusMessage": "Running ESLint --fix..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "if": "Bash(git commit:*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run lint 2>&1 || { echo '{\"decision\":\"block\",\"reason\":\"ESLint errors found. Fix them before committing.\"}'; exit 0; }",
+            "timeout": 60,
+            "statusMessage": "Running lint check before commit..."
+          }
+        ]
+      }
+    ]
+  }
+}
